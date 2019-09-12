@@ -1,0 +1,78 @@
+{% extends 'parent.html' %}
+
+{% block content %}
+
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">content</th>
+            <th scope="col">edit</th>
+            <th scope="col">delete</th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        {% for all in all_data_in_db %}
+        <tr>
+            <th scope="row">{{all.id}}</th>
+            <td>{{all.todo_content}}</td>
+            <!-- button to trigger modal -->
+            <td><button type="submit" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal{{all.id}}">edit</button></td>
+              
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal{{all.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">edit...</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- text area -->
+               <form action="/add_to/edit{{all.id}}" method="POST">
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1" ></label>
+                    <textarea name='updated_content' class="form-control" id="exampleFormControlTextarea1" rows="10" value='{{all.todo_content}}'>{{all.todo_content}}</textarea>
+                  </div>
+                  <button type="submit" class="btn btn-block btn-warning">save</button>
+                </form>
+            </div>
+           
+            </div>
+          </div>
+        </div>
+        <td>
+            <!-- btn to trigger  delete modal -->
+            <button type="submit" class="btn btn-danger " data-toggle="modal" data-target="#delete_modal{{all.id}}" >Delete</button></td>
+        
+                <!-- Modal -->
+                <div class="modal fade" id="delete_modal{{all.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                    <p>ARE YOU SURE YOU WANT TO DELETE  {{all.todo_content}}?</p>
+                    </div>
+                    <a name='delete_me' href="/add_todo/delete/{{all.id}}" class="btn btn-block btn-danger">delete</a>
+              
+                   
+                </div>
+                </div>
+            </div>
+           
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
