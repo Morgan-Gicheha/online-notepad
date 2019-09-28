@@ -6,6 +6,7 @@ class Todo(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     todo_content = db.Column(db.String(),nullable=False)
     
+    
 
     # create method to send data to db
     def create(self):
