@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,url_for
+from flask import Flask,render_template,request,redirect,url_for,flash
 # importin SQLAchemmy
 from flask_sqlalchemy import SQLAlchemy
 
@@ -19,6 +19,22 @@ def drop():
 # import model
 from models.all_todo_model import Todo
 
+# resetin password route
+@app.route('/reset/password')
+def reset_password():
+    return render_template('forgot_password.html')
+
+# creating registtration route
+@app.route('/user/registration')
+def user_registration():
+
+    return render_template ('register.html')
+# route for login page
+@app.route('/user/login', methods=['GET','POST'])
+def login():
+
+    return render_template('login.html')
+
 @app.route('/')
 def home():
     return render_template ('homepage.html')
@@ -31,7 +47,7 @@ def todo():
     all_data_in_db=Todo.query.all()
     if request.method=='POST':
         updated_content=request.form['updated_text']
-        print('updated content recieved')
+        flash('updated content recieved')
 
     
     return render_template ('view_todo.html',all_data_in_db=all_data_in_db)
@@ -62,7 +78,7 @@ def editing_todo(id):
         # print('commited')
         return redirect(url_for('todo'))
 
-# creating a route to edit the todo
+# creating a route to delete the todo
 @app.route('/add_todo/delete/<int:id>', methods=['GET'])
 def delete_todo(id):
     # calling the delete function

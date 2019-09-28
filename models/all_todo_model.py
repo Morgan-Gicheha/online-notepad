@@ -26,6 +26,7 @@ class Todo(db.Model):
             return False
 
 
+# creating a function to delete
     @classmethod
     def del_by_id(cls,id):
         fetch_del_id=cls.query.filter_by(id=id)
@@ -38,13 +39,6 @@ class Todo(db.Model):
 
 
 
-        if fetch_del_id.first():
-           fetch_del_id.delete()
-           db.session.commit()
-           return True
-
-        else:
-            return False
         
 
         
