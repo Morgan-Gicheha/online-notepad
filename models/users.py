@@ -7,7 +7,7 @@ class Users(db.Model):
     user_name = db.Column(db.String(20))
     email = db.Column(db.String(80),nullable=False)
     password = db.Column(db.String(),nullable=False)
-    
+    todo_ = db.relationship("Todo", backref="user")
 
     # commit to db
 
@@ -20,6 +20,7 @@ class Users(db.Model):
     def  email_checker(cls,email):
         email_checker= cls.query.filter_by(email=email).first()
         if email_checker:
+            return email_checker
             return True
         else:
             return False

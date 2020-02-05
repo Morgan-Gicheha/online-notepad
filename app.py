@@ -1,8 +1,9 @@
-from flask import Flask,render_template,request,redirect,url_for,flash
+from flask import Flask,render_template,request,redirect,url_for,flash, session ,g
 # importin SQLAchemmy
 from flask_sqlalchemy import SQLAlchemy
 from forms.authentication import Register,Login
 from werkzeug.security import generate_password_hash,check_password_hash
+from functools import wraps
 
 app = Flask(__name__)
 # creating configs
@@ -18,6 +19,17 @@ db = SQLAlchemy(app)
 def create():
     db.create_all()
 
+# login  required wraps
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "logged_in" in session:
+            return f(*args, **kwargs)
+        else:
+            print("Unauthorized")
+            return redirect(url_for('login'))
+    return decorated_function
 
 # import model
 from models.all_todo_model import Todo
@@ -52,6 +64,7 @@ def user_registration():
     return render_template ('register.html',form=form) 
 # route for login page
 @app.route('/login', methods=['GET','POST'])
+
 def login():
     form = Login(request.form)
     if request.method=="POST":
@@ -67,6 +80,9 @@ def login():
             chck_password= Users.password_checker(email=email,password=password)
             if chck_password:
                 print("loggged in")
+                session["logged_in"] = True
+                session["username"] = check_email.user_name
+                session["id"] = check_email.id
 
                 return redirect(url_for("home"))
 
@@ -80,7 +96,9 @@ def login():
     return render_template('login.html',form=form)
 
 @app.route('/')
+@login_required
 def home():
+
     return render_template ('homepage.html')
 
 
@@ -88,7 +106,10 @@ def home():
 @app.route('/todo', methods=['GET','POST'])
 def todo():
        # fetching all data from db
-    all_data_in_db=Todo.query.all()
+
+    all_data_in_db=Todo.query.filter_by(user_id=session["id"])
+    # filter here by session id
+    
     if request.method=='POST':
         updated_content=request.form['updated_text']
         flash('updated content recieved')
@@ -96,14 +117,14 @@ def todo():
     
     return render_template ('view_todo.html',all_data_in_db=all_data_in_db)
 
-
+# viewing pad
 @app.route('/add_todo',methods=['POST','GET'])
 def add_todo():
 
     if request.method=='POST':
         entered_data=request.form['entered_text']
     #    equating enter data to db column
-        data=Todo(todo_content=entered_data)
+        data=Todo(todo_content=entered_data,user_id=session["id"])
          # sendind to db
         data.create()
         # print('imeingia')
@@ -131,6 +152,14 @@ def delete_todo(id):
     #     print('deleted')
     
     return redirect(url_for('todo'))
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    print("logged out")
+
+    return redirect(url_for("login"))
 
 
 
