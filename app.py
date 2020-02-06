@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,url_for,flash, session ,g
+from flask import Flask,render_template,request,redirect,url_for,session ,g,flash
 # importin SQLAchemmy
 from flask_sqlalchemy import SQLAlchemy
 from forms.authentication import Register,Login
@@ -66,6 +66,8 @@ def user_registration():
 @app.route('/login', methods=['GET','POST'])
 
 def login():
+    error= None
+
     form = Login(request.form)
     if request.method=="POST":
         email= request.form.get("email")
@@ -73,27 +75,34 @@ def login():
 
         # check if email exists
         check_email=Users.email_checker(email=email)
-        if not check_email:
-            print("email not found")
-        else:
+        if  check_email:
 
             chck_password= Users.password_checker(email=email,password=password)
             if chck_password:
-                print("loggged in")
+                # flash("loggegin","success")
+                # print("loggged in")
                 session["logged_in"] = True
                 session["username"] = check_email.user_name
                 session["id"] = check_email.id
 
                 return redirect(url_for("home"))
+            else:
+                print("wrong passwrod")
+                error="password not correct"
+                flash("password not correct","warning")
 
-        
+        else:
+            print("no email found")
+            error= "email not registered login"
+            
             return redirect(url_for("login"))
+            
 
         # if email is found,check password if correct
 
 
 
-    return render_template('login.html',form=form)
+    return render_template('login.html',form=form,error=error)
 
 @app.route('/')
 @login_required
@@ -119,6 +128,7 @@ def todo():
 
 # viewing pad
 @app.route('/add_todo',methods=['POST','GET'])
+@login_required
 def add_todo():
 
     if request.method=='POST':
