@@ -4,8 +4,10 @@
 
 
 <div class="jumbotron">
-        <h1 class="display-4">Hello, {{session.username|capitalize}}</h1>
-        
+        <div align="justify"> 
+                <span style="color: black">Hello, {{session.username|capitalize}}</span>    
+        </div>
+       
         <a class="btn btn-dark btn-lg" href="/add_todo" role="button">Type something</a>
 </div>
 

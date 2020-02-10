@@ -5,7 +5,7 @@
 <table class="table table-dark">
   <thead>
     <tr>
-      <th scope="col">#</th>
+      <th scope="col">.</th>
       <th scope="col">content</th>
       <th scope="col">edit</th>
       <th scope="col">delete</th>
@@ -15,7 +15,7 @@
   <tbody>
     {% for all in all_data_in_db %}
     <tr>
-      <th scope="row">{{all.id}}</th>
+      <th scope="row">.</th>
       <td>{{all.todo_content}}</td>
       <!-- button to trigger modal -->
       <td><button type="submit" class="btn btn-warning" data-toggle="modal"
@@ -40,7 +40,7 @@
                   <textarea name='updated_content' class="form-control" id="exampleFormControlTextarea1" rows="10"
                     value='{{all.todo_content}}'>{{all.todo_content}}</textarea>
                 </div>
-                <button type="submit" class="btn btn-block btn-warning">save</button>
+                <button type="submit" class="btn btn-block btn-dark">save</button>
               </form>
             </div>
 
@@ -67,7 +67,7 @@
             <div class="modal-body">
               <p>ARE YOU SURE YOU WANT TO DELETE {{all.todo_content}}?</p>
             </div>
-            <a name='delete_me' href="/add_todo/delete/{{all.id}}" class="btn btn-block btn-danger">delete</a>
+            <a name='delete_me' href="/add_todo/delete/{{all.id}}" class="btn btn-block btn-dark">delete</a>
 
 
           </div>

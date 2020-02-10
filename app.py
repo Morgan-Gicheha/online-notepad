@@ -35,10 +35,6 @@ def login_required(f):
 from models.all_todo_model import Todo
 from models.users import Users
 
-# resetin password route
-@app.route('/reset/password')
-def reset_password():
-    return render_template('forgot_password.html')
 
 # creating registtration route
 @app.route('/register',methods=["POST","GET"])
@@ -52,15 +48,21 @@ def user_registration():
         # checking if entered email exists
         email_check=Users.email_checker(email=email)
         
-        if email_check:
-            print("exist")
-            return redirect(url_for("user_registration"))
-        else:
+        if not email_check:
             user_commit = Users(user_name = name, email=email,password=generate_password_hash(password))
             user_commit.create()
-            print("record created")
-            return redirect(url_for("login"))
-
+            message="registration success! proceed to Login "
+            return render_template ('register.html',form=form , message=message)  
+            
+            
+            # return render_template ('register.html',form=form,message=message)
+        else:
+            
+            email_error="email is already registered"
+            return render_template ('register.html',form=form,email_error=email_error) 
+    else:
+            flash("an error occured! Retry")
+            
     return render_template ('register.html',form=form) 
 # route for login page
 @app.route('/login', methods=['GET','POST'])
@@ -88,19 +90,14 @@ def login():
                 return redirect(url_for("home"))
             else:
                 print("wrong passwrod")
-                error="password not correct"
-                flash("password not correct","warning")
+                error_password="incorrect password"
+                
+                return render_template('login.html',form=form,error_password=error_password)
+
 
         else:
             print("no email found")
-            error= "email not registered login"
-            
-            return redirect(url_for("login"))
-            
-
-        # if email is found,check password if correct
-
-
+            error="email not registered login"
 
     return render_template('login.html',form=form,error=error)
 
@@ -138,6 +135,7 @@ def add_todo():
          # sendind to db
         data.create()
         # print('imeingia')
+        flash(f"Todo created! ","success")
         return redirect(url_for('add_todo'))
     
     return render_template ('add_todo.html')
@@ -151,6 +149,7 @@ def editing_todo(id):
 # sending update to db
         to_db_recieved_content=Todo.update_by_id(id=id,content=recieved_content)
         # print('commited')
+        flash(f"Todo updated! ","success")
         return redirect(url_for('todo'))
 
 # creating a route to delete the todo
@@ -160,20 +159,18 @@ def delete_todo(id):
     delete_me=Todo.del_by_id(id)
     # if delete_me:
     #     print('deleted')
+    flash(f"Todo deleted! ","danger")
     
     return redirect(url_for('todo'))
 
 
 @app.route('/logout')
 def logout():
+    
     session.clear()
-    print("logged out")
+    
 
     return redirect(url_for("login"))
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

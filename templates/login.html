@@ -11,6 +11,7 @@
 </head>
 
 <body>
+ 
   <!-- adding navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-dark">
     
@@ -21,26 +22,31 @@
       </div>
     </div>
   </nav>
-  {% extends "layout.html" %} {% block body %}
-  <form action="/login" method="POST">
-    {% if error %}
-    <p class="error"><strong>Error:</strong> {{ error }} {% endif %}</p>
+  
+  <form class="justify-content-center" action="/login" method="POST" >
+    
+    
 
     <div class="container-fluid">
       <div class="row pad">
         <div class="col-lg-4 col-lg-offset pad">
           <h2 class="text-center bold">Login</h2>
           <br />
-
+          {% if error %}
+          <span style="color: dimgray;">{{error}}</span>
+          {% endif %}
           {{ form.hidden_tag() }}
 
-          <div class="form-group">
+          <div class="form-group" >
             {{ form.email(class="form-control", placeholder="enter email") }}
           </div>
-
+          {% if error_password %}
+          <span text-align="center" style="color: dimgray;">{{error_password}}</span>
+          {% endif %}
           <div class="form-group">
-            {{ form.password(class="form-control", placeholder="enter
-              password") }}
+            
+            {{ form.password(class="form-control", placeholder="enter password") }}
+            
           </div>
           <div class="form-group">
             {{ form.submit(class="btn btn-dark ") }}
@@ -48,8 +54,9 @@
         </div>
       </div>
     </div>
+
   </form>
-  {% endblock %}
+
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -60,6 +67,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
+
 </body>
 
 </html>

@@ -40,9 +40,17 @@
             <form action="/register" method="POST">
                 {{ form.hidden_tag() }}
                 <!-- name section -->
+
+                {% if message %}
+                    <ul style="color:red;" >{{message}}</ul>
+                {% endif %}
+
                 <div class="form-group">
                     {{ form.username(class="form-control", placeholder="Enter fullname",align="t")}}
                 </div>
+                {% if email_error %}
+                <span style="color: dimgray;">{{email_error  }} </span>
+                {% endif %}
                 <!-- email section -->
                 <div class="form-group">
                     {{ form.email(class="form-control", placeholder="enter email")}}
