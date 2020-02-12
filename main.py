@@ -63,8 +63,7 @@ def user_registration():
             
             email_error="email is already registered"
             return render_template ('register.html',form=form,email_error=email_error) 
-    else:
-            flash("an error occured! Retry")
+
             
     return render_template ('register.html',form=form) 
 # route for login page
