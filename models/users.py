@@ -1,4 +1,4 @@
-from app import db
+from main import db
 from werkzeug.security import check_password_hash
 
 class Users(db.Model):

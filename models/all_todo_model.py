@@ -1,5 +1,5 @@
 # importing db
-from app import db
+from main import db
 # creating a db
 class Todo(db.Model):
     __tablename__= 'todo_table'
