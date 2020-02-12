@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 
 @app.before_first_request
 def create():
-    db.drop_all()
+    db.create_all()
 
 # login  required wraps
 
