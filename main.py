@@ -10,7 +10,7 @@ DB_URL_PRODUCTION = 'postgres://vzegdqokwbwijl:b3c57c279fb1ec7759c831e327b6fa8df
 
 app = Flask(__name__)
 # creating configs
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL_PRODUCTION 
 app.config['SECRET_KEY']='secret'
 
 
