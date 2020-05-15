@@ -14,8 +14,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SECRET_KEY']=os.urandom(24)
 
-
-
 # insantiate db
 db = SQLAlchemy(app)
 
