@@ -5,12 +5,12 @@ from forms.authentication import Register,Login
 from werkzeug.security import generate_password_hash,check_password_hash
 from functools import wraps
 
-DB_URL = 'postgresql://postgres:morgan8514@127.0.0.1:5432/todo'
-DB_URL_PRODUCTION = 'postgres://vzegdqokwbwijl:b3c57c279fb1ec7759c831e327b6fa8df15f3156219a158c30b832ee6a3ccf82@ec2-50-17-178-87.compute-1.amazonaws.com:5432/d119j4ufab68n'
+DB_URL = '
+DB_URL_PRODUCTION = ''
 
 app = Flask(__name__)
 # creating configs
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL_PRODUCTION 
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SECRET_KEY']='secret'
 
 
