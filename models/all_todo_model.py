@@ -1,7 +1,7 @@
 # importing db
 from main import db
 # creating a db
-class Todo(db.Model):
+class Todo_(db.Model):
     __tablename__= 'todo_table'
     id = db.Column(db.Integer,primary_key=True)
     todo_content = db.Column(db.String(),nullable=False)

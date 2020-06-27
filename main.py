@@ -1,24 +1,26 @@
-from flask import Flask,render_template,request,redirect,url_for,session ,g,flash
-# importin SQLAchemmy
+from flask import Flask,render_template,request,redirect,url_for,session ,g,flash,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from forms.authentication import Register,Login
 from werkzeug.security import generate_password_hash,check_password_hash
 from functools import wraps
-import os
-
-DB_URL = ''
-DB_URL_PRODUCTION = ''
+from oa import oauth, github
+import json
+DB_URL = 'postgresql://postgres:morgan@127.0.0.1:5432/todo'
+# DB_URL_PRODUCTION = 
 
 app = Flask(__name__)
 # creating configs
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
-app.config['SECRET_KEY']=os.urandom(24)
+app.config['SECRET_KEY']='secret'
+
+
 
 # insantiate db
 db = SQLAlchemy(app)
 
 @app.before_first_request
 def create():
+    oauth.init_app(app)
     db.create_all()
 
 # login  required wraps
@@ -29,14 +31,76 @@ def login_required(f):
         if "logged_in" in session:
             return f(*args, **kwargs)
         else:
-            print("Unauthorized")
             return redirect(url_for('login'))
     return decorated_function
 
 # import model
-from models.all_todo_model import Todo
+from models.all_todo_model import Todo_
 from models.users import Users
+ 
+#  github login
+@app.route("/github")
+def github_login():
+    resp = github.authorize(callback="http://localhost:5000/login/github/authorized")
+    return resp
+        
 
+@app.route("/login/github/authorized")
+def authorized():
+    response = github.authorized_response()
+    g.access_token= response["access_token"]
+    github_user = github.get('user')
+
+    username= github_user.data["login"]
+    email = github_user.data["email"]
+    if email is None:
+        github_username_search= Users.query.filter_by(user_name=username).first()
+        if github_username_search:
+            session["logged_in"] = True
+            session["username"] = github_username_search.user_name
+            session["id"] = github_username_search.id
+            return redirect(url_for("home"))
+
+        else:
+            
+            github_username_search=None
+            save_user=Users(user_name=username,email=None,password=None)
+            save_user.create()
+
+            github_username_search= Users.query.filter_by(user_name=username).first()
+
+            session["logged_in"] = True
+            session["username"] = github_username_search.user_name
+            session["id"] = github_username_search.id
+            return redirect(url_for("home"))
+            
+    github_email_search = Users.query.filter_by(email=email).first()
+
+    if github_email_search:
+        session["logged_in"] = True
+        session["username"] = github_email_search.user_name
+        session["id"] = github_username_search.id
+        return redirect(url_for("home"))
+
+    else:
+        save_user = Users(user_name=username,email=email,password=None )
+        save_user.create()
+
+        github_username_search= Users.query.filter_by(user_name=username).first()
+
+        session["logged_in"] = True
+        session["username"] = github_username_search.user_name
+        session["id"] = github_username_search.id
+        return redirect(url_for("home"))
+
+
+        # give session with email
+    
+    # search for username 
+    # seach for email in response. if none set defual to none
+    # if username found, give session
+    # if note save to db and give session
+    # after all is done redirect to homepage
 
 # creating registtration route
 @app.route('/register',methods=["POST","GET"])
@@ -46,7 +110,6 @@ def user_registration():
         name=request.form.get("username")
         email=request.form.get("email")
         password=request.form.get("password") 
-        
         # checking if entered email exists
         email_check=Users.email_checker(email=email)
         
@@ -82,22 +145,17 @@ def login():
 
             chck_password= Users.password_checker(email=email,password=password)
             if chck_password:
-                # flash("loggegin","success")
-                # print("loggged in")
                 session["logged_in"] = True
                 session["username"] = check_email.user_name
                 session["id"] = check_email.id
 
                 return redirect(url_for("home"))
             else:
-                print("wrong passwrod")
                 error_password="incorrect password"
                 
                 return render_template('login.html',form=form,error_password=error_password)
 
-
         else:
-            print("no email found")
             error="email not registered login"
 
     return render_template('login.html',form=form,error=error)
@@ -114,7 +172,7 @@ def home():
 def todo():
        # fetching all data from db
 
-    all_data_in_db=Todo.query.filter_by(user_id=session["id"])
+    all_data_in_db=Todo_.query.filter_by(user_id=session["id"])
     # filter here by session id
     
     if request.method=='POST':
@@ -132,7 +190,7 @@ def add_todo():
     if request.method=='POST':
         entered_data=request.form['entered_text']
     #    equating enter data to db column
-        data=Todo(todo_content=entered_data,user_id=session["id"])
+        data=Todo_(todo_content=entered_data,user_id=session["id"])
          # sendind to db
         data.create()
         # print('imeingia')
@@ -148,7 +206,7 @@ def editing_todo(id):
         recieved_content=request.form['updated_content']
         # print(recieved_content)
 # sending update to db
-        to_db_recieved_content=Todo.update_by_id(id=id,content=recieved_content)
+        to_db_recieved_content=Todo_.update_by_id(id=id,content=recieved_content)
         # print('commited')
         flash(f"Todo updated! ","success")
         return redirect(url_for('todo'))
@@ -157,7 +215,7 @@ def editing_todo(id):
 @app.route('/add_todo/delete/<int:id>', methods=['GET'])
 def delete_todo(id):
     # calling the delete function
-    delete_me=Todo.del_by_id(id)
+    delete_me=Todo_.del_by_id(id)
     # if delete_me:
     #     print('deleted')
     flash(f"Todo deleted! ","danger")
@@ -174,4 +232,5 @@ def logout():
     return redirect(url_for("login"))
 
 if __name__ == '__main__':
+    
     app.run(debug=True)
