@@ -53,29 +53,29 @@ In order to activate the Third party authentication with github, you  atleast ha
   1. Login to github
   2. Navigate to the settings option
   
-      ![](\images\git.png)
+      ![](/images/git.png)
 
   3. Navigate to the developer settings
 
 
-      ![](.\images\developer_set.png)
+      ![](/images/developer_set.png)
 
 
   3. Navigate to Aouth apps and click New Oauth App
 
-      ![](.\images\aouth.png)
+      ![](/images/aouth.png)
 
 
 4. Fill the relevant [view github docs on Oauth Apps](https://developer.github.com/apps/building-oauth-apps/)
 
 
 5. Get the github keys . client ID and Client Secret
-![](.\images\get_keys.png)
+![](/images/get_keys.png)
 
    Working Github Keys
    =====================
    1. Inside the free-online-notepad navitage to configs/auth_config.py
-   ![](.\images\git_keys.jpg)
+   ![](/images/git_keys.jpg)
 
    2. paste the Client ID and Client Secret to GITHUB_CONSUMER_KEY and GITHUB_CONSUMER_SECRET respectively
 
