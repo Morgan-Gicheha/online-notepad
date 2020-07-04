@@ -1,12 +1,12 @@
 from main import db
 from werkzeug.security import check_password_hash
 
-class Users(db.Model):
+class Users_(db.Model):
     """this class stores all registered users"""
     id = db.Column(db.Integer,primary_key=True)
     user_name = db.Column(db.String(20),nullable=True)
-    email = db.Column(db.String(80),nullable=True)
-    password = db.Column(db.String(),nullable=True)
+    email = db.Column(db.String(80))
+    password = db.Column(db.String())
     todo_ = db.relationship("Todo_", backref="user")
 
     # commit to db
