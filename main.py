@@ -5,13 +5,15 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from functools import wraps
 from oa import oauth, github
 import json
-DB_URL = 'postgresql://postgres:morgan@127.0.0.1:5432/todo'
-DB_URL_PRODUCTION = 'postgres://kbiumvmlmgywyy:ab6cdb841d615b28942dda992221111bba8d679673d6dc74ef941f7ada060875@ec2-18-213-176-229.compute-1.amazonaws.com:5432/dcfgerp8p1hj70'
+DB_URL = ''
+DB_URL_PRODUCTION = ''
+SQLLITE_DB= "sqlite:///db_todo.db"
 
 app = Flask(__name__)
 # creating configs
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL_PRODUCTION
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLLITE_DB
 app.config['SECRET_KEY']='secret'
+
 
 
 
