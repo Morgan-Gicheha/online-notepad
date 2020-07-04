@@ -53,7 +53,7 @@ In order to activate the Third party authentication with github, you  atleast ha
   1. Login to github
   2. Navigate to the settings option
   
-      ![](.\images\git.png)
+      ![](\images\git.png)
 
   3. Navigate to the developer settings
 
