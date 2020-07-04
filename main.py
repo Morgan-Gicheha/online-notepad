@@ -4,7 +4,9 @@ from forms.authentication import Register,Login
 from werkzeug.security import generate_password_hash,check_password_hash
 from functools import wraps
 from oa import oauth, github
+import os
 import json
+
 DB_URL = ''
 DB_URL_PRODUCTION = ''
 SQLLITE_DB= "sqlite:///db_todo.db"
@@ -12,7 +14,7 @@ SQLLITE_DB= "sqlite:///db_todo.db"
 app = Flask(__name__)
 # creating configs
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLLITE_DB
-app.config['SECRET_KEY']='secret'
+app.config['SECRET_KEY']=os.urandom(20)
 
 
 
@@ -44,12 +46,17 @@ from models.users import Users_
 @app.route("/github")
 def github_login():
     resp = github.authorize(url_for("authorized",_external=True))
+    
     return resp
 
 
 @app.route("/login/github/authorized")
 def authorized():
     response = github.authorized_response()
+    if response is None or response["access_token"] is None:
+        flash("We have a problem with github authentication. Try again later as we fix the issue or login normaly.")
+        return redirect(url_for("login"))
+        
     access_token = response['access_token']
     github_user = github.get('user', token= access_token)
     #  github info about the user
